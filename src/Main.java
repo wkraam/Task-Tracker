@@ -32,13 +32,10 @@ public class Main {
         if (args.length >= 1){
             switch (args[0]){
                 case "add":
-                    int newtaskID = fm.newTask(args[1]);
-                    System.out.println("Task added successfully (ID: "+newtaskID+")");
+                    add(fm, args[1]);
                     break;
                 case "?":
-                    System.out.println("add \t- add a task \t- requires a task description");
-                    System.out.println("update \t- update a task description \t- requires a task id and description");
-                    System.out.println("delete \t- delete a task \t- requires a task id");
+                    printHelp();
                     break;
                 case "list":
                     if (args.length == 1) list(fm);
@@ -50,15 +47,7 @@ public class Main {
             }
         }
         else{
-            System.out.println("No task to run, please use keywords add, update or delete");
-            System.out.println("add \t-\t add a task - requires a task description");
-            System.out.println("update \t-\t update a task description - requires a task id and description");
-            System.out.println("mark-in-progress \t-\t mark a task as in progress - requires a task id");
-            System.out.println("mark-done \t-\t completes a task - requires a task id");
-            System.out.println("list \t-\t lists all tasks");
-            System.out.println("list done \t-\t lists all done tasks");
-            System.out.println("list todo \t-\t lists all todo tasks");
-            System.out.println("list in-progress \t-\t lists all in-progress tasks");
+            printHelp();
 
         }
 
@@ -69,8 +58,13 @@ public class Main {
             System.out.println("testing env.");
             System.out.println("1 - test reading all tasks");
             System.out.println("2 - test used ID's");
+            System.out.println("3 - add new task");
+            System.out.println("4 - remove task with ID");
+            System.out.println("5 - update task with ID");
             System.out.println("default - exit");
             System.out.print("enter input: ");
+            int id;
+            String desc;
             switch (sc.nextLine()){
                 case "1":
                     fm.printAllTasks();
@@ -80,33 +74,46 @@ public class Main {
                     break;
                 case "3":
                     System.out.print("enter new task description: ");
-                    String desc = sc.nextLine();
-
+                    desc = sc.nextLine();
+                    add(fm, desc);
+                    break;
+                case "4":
+                    System.out.print("enter the task ID: ");
+                    id = Integer.parseInt(sc.nextLine());
+                    delete(fm, id);
+                    break;
+                case "5":
+                    System.out.print("enter the task ID: ");
+                    id = Integer.parseInt(sc.nextLine());
+                    System.out.println();
+                    System.out.print("enter the new description: ");
+                    desc = sc.nextLine();
+                    update(fm, id, desc);
                     break;
                 default:
                     cont = false;
             }
         }
-
     }
 
-    public static void add(String description){
-
+    public static void add(FileMan fm, String description) throws FileNotFoundException {
+        int returnInt = fm.newTask(description);
+        System.out.println("Task added successfully (ID: "+returnInt+")");
     }
 
-    public static void update(int id, String description){
+    public static void update(FileMan fm, int id, String description) throws FileNotFoundException{
+        fm.updateTask(id, description);
+    }
+    public static void delete(FileMan fm, int id) throws FileNotFoundException {
+        fm.deleteTask(id);
+    }
+    public static void markInProgress (FileMan fm, int id) throws FileNotFoundException{
 
     }
-    public static void delete(int id){
+    public static void markDone(FileMan fm, int id) throws FileNotFoundException{
 
     }
-    public static void markInProgress (int id){
-
-    }
-    public static void markDone(int id){
-
-    }
-    public static void list(FileMan fm ,String command){
+    public static void list(FileMan fm ,String command) throws FileNotFoundException{
         if(command.equalsIgnoreCase("done")){
             System.out.println("listing all done tasks");
         }else if(command.equalsIgnoreCase("todo")){
@@ -118,5 +125,17 @@ public class Main {
     public static void list(FileMan fm){
         System.out.println("listing all available tasks");
         fm.printAllTasks();
+    }
+
+    public static void printHelp(){
+        System.out.println("--- HELP ---");
+        System.out.println("add \t-\t add a task - requires a task description");
+        System.out.println("update \t-\t update a task description - requires a task id and description");
+        System.out.println("mark-in-progress \t-\t mark a task as in progress - requires a task id");
+        System.out.println("mark-done \t-\t completes a task - requires a task id");
+        System.out.println("list \t-\t lists all tasks");
+        System.out.println("list done \t-\t lists all done tasks");
+        System.out.println("list todo \t-\t lists all todo tasks");
+        System.out.println("list in-progress \t-\t lists all in-progress tasks");
     }
 }

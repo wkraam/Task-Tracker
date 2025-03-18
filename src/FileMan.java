@@ -21,36 +21,36 @@ public class FileMan {
     static ArrayList<Integer> usedIDs;
     static JSONObject jsonTaskList;
 
-    //This object deals with the file management, in this case managing JSON file
+    // ---- external ----
     int newTask(String description) throws FileNotFoundException {
         //needs to get the list of used ID's, and go from there
         int newID = getUsedIDs().get(getUsedIDs().size()-1)+1;
         usedIDs.add(newID);
         Task newTask = new Task(newID, description, Status.TODO, LocalDateTime.now(), LocalDateTime.now());
         allTasks.add(newTask);
-        //jsonTaskList.put("tasks", new Task(newID, description, "todo", LocalDateTime.now(), LocalDateTime.now()).toString());
-
-        //todo: write to file the file header and then all tasks.
-        // Basically to add a new task I need to rewrite the whole file. Small files will be ok, but big files... not so much
-        PrintWriter pw = new PrintWriter(fileName);
-
-        pw.write("{\n\"tasks\":[\n");
-        if (allTasks.size() == 1) pw.append(allTasks.get(0).toJSON());
-        else{
-            for (int i = 0; i < allTasks.size(); i++) {
-                pw.append(allTasks.get(i).toJSON());
-                if(i+1 != allTasks.size()){
-                    pw.append(",\n");
-                }else pw.append("\n");
-            }
-        }
-        pw.append("]\n}");
-        pw.flush();
-        pw.close();
-
+        updateTaskJson();
         return newID;
     }
+    public void deleteTask(int id) throws FileNotFoundException {
+        allTasks.removeIf(task -> task.getId() == id);
+        usedIDs.remove((Integer) id);
+        updateTaskJson();
+    }
+    public void updateTask(int id, String description) throws FileNotFoundException {
+        for (Task task:allTasks){
+            if (task.getId()==id){
+                task.setDescription(description);
+            }
+        }
+        updateTaskJson();
+    }
+    void printAllTasks(){
+        for (Task el:allTasks){
+            System.out.println(el.toString());
+        }
+    }
 
+    // ---- internal ----
     static ArrayList<Task> readAllTasks(){
         usedIDs = new ArrayList<>();
         //first try to open the JSON file, then try to read it
@@ -85,13 +85,25 @@ public class FileMan {
         usedIDs.sort(null);
         return returnList;
     }
-
-    void printAllTasks(){
-        for (Task el:allTasks){
-            System.out.println(el.toString());
-        }
-    }
     public ArrayList<Integer> getUsedIDs() {
         return usedIDs;
     }
+    public void updateTaskJson() throws FileNotFoundException {
+        PrintWriter pw = new PrintWriter(fileName);
+        pw.write("{\n\"tasks\":[\n");
+        if (allTasks.size() == 1) pw.append(allTasks.get(0).toJSON());
+        else{
+            for (int i = 0; i < allTasks.size(); i++) {
+                pw.append(allTasks.get(i).toJSON());
+                if(i+1 != allTasks.size()){
+                    pw.append(",\n");
+                }else pw.append("\n");
+            }
+        }
+        pw.append("]\n}");
+        pw.flush();
+        pw.close();
+    }
+
+
 }
