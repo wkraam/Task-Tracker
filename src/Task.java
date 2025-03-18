@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 public class Task{
     private int id;
     private String description;
-    private String status;
+    private Status status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -11,22 +11,48 @@ public class Task{
         return id;
     }
 
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+        this.updatedAt = LocalDateTime.now();
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
+    public String toJSON() {
+        return "{" +
+                "\"id\":\"" + id + "\""+
+                ", \"description\":\"" + description  +"\""+
+                ", \"status\":\"" + status +"\""+
+                ", \"createdAt\":\"" + createdAt +"\""+
+                ", \"updatedAt\":\"" + updatedAt +"\""+
+                '}';
     }
 
     //status can only be todo, in-progress, done
     public void setStatus(String status) {
-        this.status = status;
+
+        switch (status.toLowerCase()) {
+            case "todo" -> this.status = Status.TODO;
+            case "in-progress", "in progress" -> this.status = Status.IN_PROGRESS;
+            case "done" -> this.status = Status.DONE;
+        }
+        this.updatedAt = LocalDateTime.now();
     }
 
     public LocalDateTime getCreatedAt() {
@@ -37,19 +63,11 @@ public class Task{
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Task() {
-
-    }
-
-    public Task(int id, String description, String status) {
+    public Task(int id, String description, Status status, LocalDateTime creationTime, LocalDateTime updatedTime) {
         this.id = id;
         this.description = description;
         this.status = status;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = null;
+        this.createdAt = creationTime;
+        this.updatedAt = updatedTime;
     }
 }
