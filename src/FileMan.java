@@ -44,9 +44,48 @@ public class FileMan {
         }
         updateTaskJson();
     }
-    void printAllTasks(){
+    public void markTaskDone(int id) throws FileNotFoundException {
+        for (Task task :
+                allTasks) {
+            if (task.getId() == id) {
+                task.setStatus("done");
+            }
+        }
+        updateTaskJson();
+    }
+    public void markTaskInprogress(int id) throws FileNotFoundException {
+        for (Task task :
+                allTasks) {
+            if (task.getId() == id) {
+                task.setStatus("in-progress");
+            }
+        }
+        updateTaskJson();
+    }
+    public void printAllTasks(){
         for (Task el:allTasks){
             System.out.println(el.toString());
+        }
+    }
+    public void printAllDone() {
+        for (Task task:allTasks) {
+            if (task.getStatus() == Status.DONE) {
+                System.out.println(task);
+            }
+        }
+    }
+    public void printAllTodo() {
+        for (Task task:allTasks) {
+            if (task.getStatus() == Status.TODO) {
+                System.out.println(task);
+            }
+        }
+    }
+    public void printAllInprogress() {
+        for (Task task:allTasks) {
+            if (task.getStatus() == Status.IN_PROGRESS) {
+                System.out.println(task);
+            }
         }
     }
 
@@ -104,6 +143,5 @@ public class FileMan {
         pw.flush();
         pw.close();
     }
-
 
 }

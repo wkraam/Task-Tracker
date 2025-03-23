@@ -41,6 +41,36 @@ public class Main {
                     if (args.length == 1) list(fm);
                     else list(fm, args[1]);
                     break;
+                case "delete":
+                    if (args.length == 2){
+                        fm.deleteTask(Integer.parseInt(args[1]));
+                    } else {
+                        System.out.println("please enter only one ID");
+                    }
+                    break;
+                case "update":
+                    if (args.length == 3){
+                        fm.updateTask(Integer.parseInt(args[1]), args[2].toString());
+                    } else {
+                        System.out.println("please enter task ID and description between \" after update keyword");
+                    }
+                    break;
+                case "mark-in-progress":{
+                    if (args.length == 2){
+                        fm.markTaskInprogress(Integer.parseInt(args[1]));
+                    } else {
+                        System.out.println("please enter only one ID");
+                    }
+                    break;
+                }
+                case "mark-done":{
+                    if (args.length == 2){
+                        fm.markTaskDone(Integer.parseInt(args[1]));
+                    } else {
+                        System.out.println("please enter only one ID");
+                    }
+                    break;
+                }
                 default:
                     System.out.println("unrecognized command, ? for info");
                     break;
@@ -61,37 +91,52 @@ public class Main {
             System.out.println("3 - add new task");
             System.out.println("4 - remove task with ID");
             System.out.println("5 - update task with ID");
+            System.out.println("6 - mark task done with ID");
+            System.out.println("7 - mark task in progress with ID");
+            System.out.println("8 - print all done tasks");
+            System.out.println("9 - print all in progress tasks");
+            System.out.println("0 - print all todo tasks");
             System.out.println("default - exit");
             System.out.print("enter input: ");
             int id;
             String desc;
-            switch (sc.nextLine()){
-                case "1":
-                    fm.printAllTasks();
-                    break;
-                case "2":
-                    System.out.println(fm.getUsedIDs());
-                    break;
-                case "3":
+            switch (sc.nextLine()) {
+                case "1" -> fm.printAllTasks();
+                case "2" -> System.out.println(fm.getUsedIDs());
+                case "3" -> {
                     System.out.print("enter new task description: ");
                     desc = sc.nextLine();
                     add(fm, desc);
-                    break;
-                case "4":
+                }
+                case "4" -> {
                     System.out.print("enter the task ID: ");
                     id = Integer.parseInt(sc.nextLine());
                     delete(fm, id);
-                    break;
-                case "5":
+                }
+                case "5" -> {
                     System.out.print("enter the task ID: ");
                     id = Integer.parseInt(sc.nextLine());
                     System.out.println();
                     System.out.print("enter the new description: ");
                     desc = sc.nextLine();
                     update(fm, id, desc);
-                    break;
-                default:
-                    cont = false;
+                }
+                case "6" ->{
+                    System.out.print("enter the task ID: ");
+                    id = Integer.parseInt(sc.nextLine());
+                    System.out.println();
+                    markDone(fm, id);
+                }
+                case "7" ->{
+                    System.out.print("enter the task ID: ");
+                    id = Integer.parseInt(sc.nextLine());
+                    System.out.println();
+                    markInProgress(fm, id);
+                }
+                case "8" -> list(fm, "done");
+                case "9" -> list(fm, "in-progress");
+                case "0" -> list(fm, "todo");
+                default -> cont = false;
             }
         }
     }
@@ -108,18 +153,21 @@ public class Main {
         fm.deleteTask(id);
     }
     public static void markInProgress (FileMan fm, int id) throws FileNotFoundException{
-
+        fm.markTaskInprogress(id);
     }
     public static void markDone(FileMan fm, int id) throws FileNotFoundException{
-
+        fm.markTaskDone(id);
     }
     public static void list(FileMan fm ,String command) throws FileNotFoundException{
         if(command.equalsIgnoreCase("done")){
             System.out.println("listing all done tasks");
+            fm.printAllDone();
         }else if(command.equalsIgnoreCase("todo")){
             System.out.println("listing all todo tasks");
+            fm.printAllTodo();
         } else if (command.equalsIgnoreCase("in-progress")) {
             System.out.println("listing all in-progress tasks");
+            fm.printAllInprogress();
         }
     }
     public static void list(FileMan fm){
